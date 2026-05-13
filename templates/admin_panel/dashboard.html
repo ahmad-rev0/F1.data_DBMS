@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Admin — table counts{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">Database snapshot</h1>
+<p class="text-muted small">Staff-only row counts and maintenance tools.</p>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">Reload championship CSVs</div>
+            <div class="card-body">
+                <p class="small text-muted">Truncates F1 tables and re-imports from <code>CSV files/</code> (~1 minute).</p>
+                <form method="post" action="{% url 'admin_panel:reload_csv' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning" onclick="return confirm('This wipes and reloads all F1 tables. Continue?');">Reload CSV data</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">Edit race points (UPDATE)</div>
+            <div class="card-body">
+                <p class="small text-muted mb-2">Enter a <code>race_id</code> from the Races page URL, then open the editor.</p>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="raceIdInput" placeholder="race_id" min="1">
+                    <button type="button" class="btn btn-dark" id="raceIdGo">Open editor</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+(function() {
+  const tpl = "{% url 'admin_panel:race_results_edit' 999999 %}";
+  document.getElementById('raceIdGo').addEventListener('click', function() {
+    const v = document.getElementById('raceIdInput').value.trim();
+    if (!v) return;
+    location.href = tpl.replace('999999', v);
+  });
+})();
+</script>
+
+{% if counts.error %}
+    <div class="alert alert-danger">{{ counts.error }}</div>
+{% else %}
+    <div class="table-responsive bg-white shadow-sm rounded">
+        <table class="table table-sm mb-0">
+            <thead class="table-light"><tr><th>Table</th><th>Rows</th></tr></thead>
+            <tbody>
+            {% for name, n in counts.items %}
+                <tr><td><code>{{ name }}</code></td><td>{{ n|intcomma }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+
+{% if standings_years %}
+<h2 class="h6 mt-4">Quick standings</h2>
+<p class="small">
+{% for y in standings_years|slice:":12" %}
+    <a href="{% url 'racing:season_driver_standings' y %}">{{ y }}</a>
+    {% if not forloop.last %}·{% endif %}
+{% endfor %}
+</p>
+{% endif %}
+{% endblock %}

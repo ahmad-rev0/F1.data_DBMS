@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}{{ constructor.name }}{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'racing:constructor_list' %}" class="text-decoration-none">← Constructors</a>
+</div>
+<div class="p-4 bg-white shadow-sm rounded page-card mb-4">
+    <h1 class="h3">{{ constructor.name }}</h1>
+    <p class="text-muted mb-0">{{ constructor.nationality }}</p>
+</div>
+<h2 class="h5">Recent entries (race results)</h2>
+<div class="table-responsive bg-white shadow-sm rounded">
+    <table class="table table-sm mb-0">
+        <thead class="table-light">
+        <tr><th>Date</th><th>Race</th><th>Driver</th><th>Pos.</th><th>Pts</th></tr>
+        </thead>
+        <tbody>
+        {% for rr in recent %}
+            <tr>
+                <td>{{ rr.race.race_date }}</td>
+                <td><a href="{% url 'racing:race_detail' rr.race.race_id %}">{{ rr.race.name }}</a></td>
+                <td><a href="{% url 'racing:driver_detail' rr.driver.driver_id %}">{{ rr.driver.forename }} {{ rr.driver.surname }}</a></td>
+                <td>{{ rr.finish_position|default:rr.position_text }}</td>
+                <td>{{ rr.points }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="5" class="text-muted p-3">No rows.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

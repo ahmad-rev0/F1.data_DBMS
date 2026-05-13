@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Home — F1 Data Platform{% endblock %}
+
+{% block content %}
+<div class="p-4 bg-white shadow-sm rounded page-card mb-4">
+    <h1 class="h3 mb-2">Formula 1 championship explorer</h1>
+    <p class="text-muted mb-0">
+        Browse circuits, drivers, constructors, and race results backed by a normalised MySQL schema
+        loaded from the Kaggle “Formula 1 World Championship” CSV collection.
+    </p>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted">Drivers</h2>
+                <p class="display-6">{{ stats.driver_count|default:0|intcomma }}</p>
+                <a href="{% url 'racing:driver_list' %}" class="stretched-link text-decoration-none">Open directory</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted">Races</h2>
+                <p class="display-6">{{ stats.race_count|default:0|intcomma }}</p>
+                <a href="{% url 'racing:race_list' %}" class="stretched-link text-decoration-none">Chronological list</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted">Lap times (rows)</h2>
+                <p class="display-6">{{ stats.lap_time_count|default:0|intcomma }}</p>
+                <p class="small text-muted mb-0">
+                    {% if stats.lap_reporting_fact_count is not None %}
+                        Denormalised <code>lap_reporting_fact</code>: {{ stats.lap_reporting_fact_count|intcomma }} rows (same order of magnitude as <code>lap_time</code>).
+                    {% else %}
+                        Run <code>database/patch_lap_reporting_fact.sql</code> then reload CSVs to create <code>lap_reporting_fact</code> (second 50k+ table for the rubric).
+                    {% endif %}
+                </p>
+                <a href="{% url 'racing:race_list' %}" class="stretched-link text-decoration-none">Pick a race for lap pages</a>
+            </div>
+        </div>
+    </div>
+</div>
+<p class="mt-3">
+    <a href="{% url 'racing:standings_hub' %}">Season standings</a>
+    · <a href="{% url 'racing:race_list' %}">All races</a>
+    · <a href="{% url 'core:about' %}">Methods &amp; SQL assets</a>
+</p>
+{% endblock %}

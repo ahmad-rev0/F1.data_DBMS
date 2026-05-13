@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Notes · {{ race.name }}{% endblock %}
+
+{% block content %}
+<div class="mb-2"><a href="{% url 'racing:race_detail' race.race_id %}">Race</a></div>
+<h1 class="h3 mb-3">Your notes · {{ race.name }}</h1>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h2 class="h6">Add note</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.body }}
+            <button type="submit" class="btn btn-danger mt-2">Save</button>
+        </form>
+    </div>
+</div>
+
+<ul class="list-group shadow-sm">
+{% for n in notes %}
+    <li class="list-group-item d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div>{{ n.body|linebreaksbr }}</div>
+        <div class="btn-group btn-group-sm">
+            <a class="btn btn-outline-secondary" href="{% url 'racing:race_note_edit' race.race_id n.pk %}">Edit</a>
+            <form method="post" action="{% url 'racing:race_note_delete' race.race_id n.pk %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Delete this note?');">Delete</button>
+            </form>
+        </div>
+        <small class="text-muted w-100">{{ n.updated_at }}</small>
+    </li>
+{% empty %}
+    <li class="list-group-item text-muted">No notes yet.</li>
+{% endfor %}
+</ul>
+{% endblock %}

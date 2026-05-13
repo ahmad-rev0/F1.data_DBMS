@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}{{ race.name }}{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'racing:race_list' %}" class="text-decoration-none">← Races</a>
+</div>
+<div class="p-4 bg-white shadow-sm rounded page-card mb-4">
+    <h1 class="h3">{{ race.name }}</h1>
+    <p class="mb-0 text-muted">{{ race.race_date }} · Round {{ race.round_num }} · {{ race.year }}</p>
+    <p class="mb-0 mt-2">
+        <a href="{% url 'racing:circuit_detail' race.circuit.circuit_id %}">{{ race.circuit.name }}</a>
+    </p>
+    <p class="mb-0 mt-3 small">
+        <a href="{% url 'racing:race_laps' race.race_id %}">Lap times</a>
+        {% if user.is_authenticated %}
+            · <a href="{% url 'racing:race_notes' race.race_id %}">My notes{% if note_count %} ({{ note_count }}){% endif %}</a>
+        {% endif %}
+        · <a href="{% url 'racing:season_driver_standings' race.year %}">Driver standings {{ race.year }}</a>
+        · <a href="{% url 'racing:season_constructor_standings' race.year %}">Constructor standings</a>
+        · <a href="{% url 'racing:procedure_driver_standings' race.year %}">SQL procedure</a>
+    </p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <h2 class="h5">Race results</h2>
+        <div class="table-responsive bg-white shadow-sm rounded">
+            <table class="table table-sm mb-0">
+                <thead class="table-light">
+                <tr><th>Pos</th><th>Driver</th><th>Constructor</th><th>Pts</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                {% for rr in results %}
+                    <tr>
+                        <td>{{ rr.finish_position|default:rr.position_text }}</td>
+                        <td><a href="{% url 'racing:driver_detail' rr.driver.driver_id %}">{{ rr.driver.forename }} {{ rr.driver.surname }}</a></td>
+                        <td>{{ rr.constructor.name }}</td>
+                        <td>{{ rr.points }}</td>
+                        <td class="small">{{ rr.finishing_status.label }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5" class="text-muted p-3">No results.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <h2 class="h5">Qualifying</h2>
+        <div class="table-responsive bg-white shadow-sm rounded">
+            <table class="table table-sm mb-0">
+                <thead class="table-light">
+                <tr><th>Pos</th><th>Driver</th><th>Q3</th></tr>
+                </thead>
+                <tbody>
+                {% for q in qualifying %}
+                    <tr>
+                        <td>{{ q.qualify_position|default:"—" }}</td>
+                        <td>{{ q.driver.forename }} {{ q.driver.surname }}</td>
+                        <td class="small text-muted">{{ q.q3|default:"—" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="3" class="text-muted p-3">No qualifying rows.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

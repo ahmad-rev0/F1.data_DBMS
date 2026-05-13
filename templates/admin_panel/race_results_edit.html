@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Edit results · {{ race.name }}{% endblock %}
+
+{% block content %}
+<div class="mb-2"><a href="{% url 'admin_panel:dashboard' %}">Admin</a></div>
+<h1 class="h4 mb-1">Adjust points · {{ race.name }}</h1>
+<p class="text-muted small mb-3">{{ race.race_date }} — triggers reject negative points.</p>
+<form method="post">
+    {% csrf_token %}
+    <div class="table-responsive bg-white shadow-sm rounded">
+        <table class="table table-sm mb-0">
+            <thead class="table-light">
+            <tr><th>Order</th><th>Driver</th><th>Constructor</th><th>Points</th></tr>
+            </thead>
+            <tbody>
+            {% for rr in results %}
+                <tr>
+                    <td>{{ rr.position_order }}</td>
+                    <td>{{ rr.driver.forename }} {{ rr.driver.surname }}</td>
+                    <td>{{ rr.constructor.name }}</td>
+                    <td style="max-width:6rem;">
+                        <input type="number" step="0.5" min="0" class="form-control form-control-sm"
+                               name="pts_{{ rr.result_id }}" value="{{ rr.points }}">
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <button type="submit" class="btn btn-danger mt-3">Save all points</button>
+</form>
+{% endblock %}

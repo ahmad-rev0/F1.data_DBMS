@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ driver.forename }} {{ driver.surname }}{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'racing:driver_list' %}" class="text-decoration-none">← Drivers</a>
+</div>
+<div class="p-4 bg-white shadow-sm rounded page-card mb-4 d-flex justify-content-between align-items-start flex-wrap gap-3">
+    <div>
+        <h1 class="h3 mb-1">{{ driver.forename }} {{ driver.surname }}</h1>
+        <p class="text-muted mb-0">{{ driver.nationality }}{% if driver.dob %} · born {{ driver.dob }}{% endif %}</p>
+    </div>
+    {% if user.is_authenticated %}
+        <form method="post" class="m-0">
+            {% csrf_token %}
+            {% if following %}
+                <button type="submit" class="btn btn-outline-secondary">Unfollow</button>
+            {% else %}
+                <button type="submit" class="btn btn-danger">Follow driver</button>
+            {% endif %}
+        </form>
+    {% endif %}
+    <a class="btn btn-outline-dark" href="{% url 'racing:driver_export_csv' driver.driver_id %}">Download CSV</a>
+</div>
+
+<h2 class="h5">Recent race results</h2>
+<div class="table-responsive bg-white shadow-sm rounded">
+    <table class="table table-sm mb-0">
+        <thead class="table-light">
+        <tr><th>Date</th><th>Race</th><th>Constructor</th><th>Pos.</th><th>Pts</th></tr>
+        </thead>
+        <tbody>
+        {% for rr in results %}
+            <tr>
+                <td>{{ rr.race.race_date }}</td>
+                <td><a href="{% url 'racing:race_detail' rr.race.race_id %}">{{ rr.race.name }}</a></td>
+                <td>{{ rr.constructor.name }}</td>
+                <td>{{ rr.finish_position|default:rr.position_text }}</td>
+                <td>{{ rr.points }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="5" class="text-muted p-3">No results for this driver.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

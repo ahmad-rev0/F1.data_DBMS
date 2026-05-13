@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}About — F1 Data Platform{% endblock %}
+
+{% block content %}
+<div class="p-4 bg-white shadow-sm rounded page-card">
+    <h1 class="h3 mb-3">About this build</h1>
+    <p>
+        This project is a teaching scaffold for <strong>COMP3013 Database Management Systems</strong>:
+        reference tables are defined in <code>database/schema.sql</code>, indexed in
+        <code>database/indexes.sql</code>, and populated with <code>scripts/load_f1_csv.py</code>
+        from the CSV bundle in <code>CSV files/</code> (Kaggle: Rohan Rao, Formula&nbsp;1 World Championship).
+    </p>
+    <p>
+        Django manages authentication tables plus <code>accounts_profile</code> and
+        <code>accounts_driver_follow</code>; all championship tables are unmanaged ORM models mapped to the
+        hand-authored MySQL schema so your ER diagram and DDL stay first-class deliverables.
+    </p>
+    <p>
+        Two high-volume physical tables meet the “&gt;50,000 rows in at least two tables” rubric:
+        <code>lap_time</code> (raw timing telemetry) and <code>lap_reporting_fact</code> (denormalised copy with season, venue, and driver labels for analytics queries).
+    </p>
+    <p>
+        <strong>SQL extras:</strong> <code>database/procedures.sql</code> (callable from the “SQL procedure” standings link),
+        <code>database/triggers.sql</code> (non-negative <code>race_result.points</code>),
+        and <code>scripts/benchmark_performance.py</code> for insert/search/delete timings.
+    </p>
+    <p class="mb-0 text-muted small">
+        Django management command: <code>python manage.py load_f1_data</code> (same as the CSV script).
+        Staff can reload data or edit race points from the Admin panel.
+    </p>
+</div>
+{% endblock %}

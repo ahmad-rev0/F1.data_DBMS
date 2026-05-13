@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Standings{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">Championship standings by season</h1>
+<p class="text-muted">Pick a year to see driver and constructor tables after the final race loaded for that season.</p>
+{% if latest %}
+    <p>
+        <a class="btn btn-danger" href="{% url 'racing:season_driver_standings' latest %}">Drivers {{ latest }}</a>
+        <a class="btn btn-outline-danger" href="{% url 'racing:season_constructor_standings' latest %}">Constructors {{ latest }}</a>
+        <a class="btn btn-outline-secondary" href="{% url 'racing:procedure_driver_standings' latest %}">SQL procedure (drivers)</a>
+    </p>
+{% endif %}
+<div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-2">
+{% for y in years %}
+    <div class="col">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body py-2 text-center small">
+                <strong>{{ y }}</strong><br>
+                <a href="{% url 'racing:season_driver_standings' y %}">Drivers</a> ·
+                <a href="{% url 'racing:season_constructor_standings' y %}">Teams</a>
+            </div>
+        </div>
+    </div>
+{% empty %}
+    <p class="text-muted">No seasons in the database.</p>
+{% endfor %}
+</div>
+{% endblock %}

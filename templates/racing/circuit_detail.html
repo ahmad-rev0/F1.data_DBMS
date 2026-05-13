@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}{{ circuit.name }}{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'racing:circuit_list' %}" class="text-decoration-none">← Circuits</a>
+</div>
+<div class="p-4 bg-white shadow-sm rounded page-card mb-4">
+    <h1 class="h3">{{ circuit.name }}</h1>
+    <p class="text-muted mb-0">{{ circuit.location }}, {{ circuit.country }}</p>
+    {% if circuit.lat %}
+        <p class="small mb-0 mt-2">Coordinates: {{ circuit.lat }}, {{ circuit.lng }}</p>
+    {% endif %}
+</div>
+<h2 class="h5">Recent races</h2>
+<div class="table-responsive bg-white shadow-sm rounded">
+    <table class="table table-sm mb-0">
+        <thead class="table-light"><tr><th>Year</th><th>Round</th><th>Race</th></tr></thead>
+        <tbody>
+        {% for r in races %}
+            <tr>
+                <td>{{ r.year }}</td>
+                <td>{{ r.round_num }}</td>
+                <td><a href="{% url 'racing:race_detail' r.race_id %}">{{ r.name }}</a></td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="3" class="text-muted p-3">No races linked to this circuit in the database.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

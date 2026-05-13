@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Edit note{% endblock %}
+
+{% block content %}
+<div class="mb-2"><a href="{% url 'racing:race_notes' race.race_id %}">Notes</a></div>
+<h1 class="h5 mb-3">Edit note</h1>
+<form method="post" class="card shadow-sm p-4">
+    {% csrf_token %}
+    {{ form.body }}
+    <div class="mt-3">
+        <button type="submit" class="btn btn-danger">Save</button>
+        <a href="{% url 'racing:race_notes' race.race_id %}" class="btn btn-link">Cancel</a>
+    </div>
+</form>
+{% endblock %}

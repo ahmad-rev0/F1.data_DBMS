@@ -1,0 +1,15 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
+staticfiles/
+media/
+.idea/
+.vscode/
+*.log
+deploy/aiven-ca.pem
+frontend/node_modules/
+frontend/.next/

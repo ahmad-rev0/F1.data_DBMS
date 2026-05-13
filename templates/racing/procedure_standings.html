@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Procedure · drivers {{ year }}{% endblock %}
+
+{% block content %}
+<div class="mb-2"><a href="{% url 'racing:standings_hub' %}">Standings</a></div>
+<h1 class="h3 mb-3"><code>CALL sp_driver_standings_end_of_year({{ year }})</code></h1>
+{% if error %}
+    <div class="alert alert-warning">{{ error }}</div>
+    <p class="small text-muted">Apply <code>database/procedures.sql</code> to MySQL if this procedure is missing.</p>
+{% else %}
+    <div class="table-responsive bg-white shadow-sm rounded">
+        <table class="table table-sm mb-0">
+            <thead class="table-light">
+            <tr><th>Pos</th><th>Driver</th><th>Points</th><th>Wins</th><th>After race</th></tr>
+            </thead>
+            <tbody>
+            {% for row in rows %}
+                <tr>
+                    <td>{{ row.0 }}</td>
+                    <td><a href="{% url 'racing:driver_detail' row.1 %}">{{ row.2 }} {{ row.3 }}</a></td>
+                    <td>{{ row.4 }}</td>
+                    <td>{{ row.5 }}</td>
+                    <td class="small">{{ row.6 }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="5" class="text-muted p-3">Empty result.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}
