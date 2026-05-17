@@ -17,5 +17,5 @@ if (-not (Test-Path $py)) {
     Write-Error "Missing $py — create the venv first: python -m venv .venv ; .\.venv\Scripts\pip install -r requirements.txt"
 }
 
-Write-Host "F1 platform → http://127.0.0.1:$Port/ (Ctrl+C to stop)"
+Write-Host "F1 platform: http://127.0.0.1:$Port/ (Ctrl+C to stop)"
 & $py (Join-Path $PSScriptRoot "manage.py") runserver "127.0.0.1:$Port"
