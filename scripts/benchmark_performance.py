@@ -6,7 +6,6 @@ Run from repo root:
 from __future__ import annotations
 
 import os
-import sys
 import time
 from pathlib import Path
 
@@ -14,10 +13,6 @@ import pymysql
 from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parent.parent
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-from f1_platform.mysql_tls import pymysql_ssl_kwargs
 
 
 def connect():
@@ -29,7 +24,6 @@ def connect():
         password=os.environ.get("MYSQL_PASSWORD", ""),
         database=os.environ.get("MYSQL_DATABASE", "formula1"),
         charset="utf8mb4",
-        **pymysql_ssl_kwargs(),
     )
 
 

@@ -6,8 +6,6 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from .mysql_tls import django_mysql_ssl_options
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
@@ -21,20 +19,6 @@ ALLOWED_HOSTS = [
     for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
     if h.strip()
 ]
-_render_host = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "").strip()
-if _render_host and _render_host not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS = [*ALLOWED_HOSTS, _render_host]
-
-_cors_origins = [
-    o.strip()
-    for o in os.environ.get("DJANGO_CORS_ALLOWED_ORIGINS", "").split(",")
-    if o.strip()
-]
-_csrf_origins = [
-    o.strip()
-    for o in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
-    if o.strip()
-]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -44,7 +28,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
-    "corsheaders",
     "core",
     "accounts",
     "racing",
@@ -53,8 +36,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -96,7 +77,6 @@ DATABASES = {
         "OPTIONS": {
             "charset": "utf8mb4",
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
-            **django_mysql_ssl_options(),
         },
     }
 }
@@ -122,25 +102,3 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-CORS_ALLOWED_ORIGINS = _cors_origins
-CORS_URLS_REGEX = r"^/api/.*$"
-CORS_ALLOW_CREDENTIALS = False
-
-CSRF_TRUSTED_ORIGINS = _csrf_origins
-
-DJANGO_PRODUCTION = os.environ.get("DJANGO_PRODUCTION", "").lower() in (
-    "1",
-    "true",
-    "yes",
-) or os.environ.get("RENDER", "").lower() == "true"
-
-if DJANGO_PRODUCTION:
-    DEBUG = False
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True

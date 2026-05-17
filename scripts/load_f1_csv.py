@@ -19,11 +19,6 @@ from dotenv import load_dotenv
 from tqdm import tqdm
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
-from f1_platform.mysql_tls import pymysql_ssl_kwargs
-
 CSV_DIR = PROJECT_ROOT / "CSV files"
 _NA = [r"\N", "\\N"]
 
@@ -42,7 +37,6 @@ def _connect() -> pymysql.connections.Connection:
         database=os.environ.get("MYSQL_DATABASE", "formula1"),
         charset="utf8mb4",
         autocommit=False,
-        **pymysql_ssl_kwargs(),
     )
 
 
